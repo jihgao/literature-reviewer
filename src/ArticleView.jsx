@@ -1,6 +1,6 @@
 import React from 'react';
 const isFunction = (arg) => Object.prototype.toString.call(arg) === '[object Function]';
-const isString = (arg) => Object.prototype.toString.call(arg) === '[object String]';
+// const isString = (arg) => Object.prototype.toString.call(arg) === '[object String]';
 const groupBy = (arr, keyOrFn) => {
   return arr.reduce((ret, record) => {
     if(record){
@@ -24,7 +24,7 @@ function tagGroupByIterator(record) {
     }
 }
 
-export default ({dataSource}) => {
+const ArticleView = ({dataSource}) => {
   const regions = groupBy(dataSource, 'region');
   let references = [];
   return (
@@ -77,3 +77,5 @@ export default ({dataSource}) => {
     </article>
   )
 };
+
+export default ArticleView;

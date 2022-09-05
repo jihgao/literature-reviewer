@@ -31,7 +31,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
       if(onChange){
         onChange(nextDataSource);
       }
-    }, [myDataSource]);
+    }, [myDataSource, onChange]);
     const handleClickOnCopy = useCallback((index) => {
       const nextDataSource = myDataSource.slice();
       const newRecord = {
@@ -43,21 +43,21 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
       }
       nextDataSource.splice(index, 0, newRecord);
       handleChange(nextDataSource);
-    }, [myDataSource]);
+    }, [myDataSource, handleChange]);
     const handleClickOnUp = useCallback((index) => {
       const nextDataSource = myDataSource.slice();
       [nextDataSource[index - 1], nextDataSource[index]] = [nextDataSource[index], nextDataSource[index - 1]];
       handleChange(nextDataSource);
-    }, [myDataSource]);
+    }, [myDataSource, handleChange]);
     const handleTableChange = useCallback((nextPagination) => {
       setPagination(nextPagination);
-    }, [myDataSource]);
+    }, []);
   
      const handleClickOnDown = useCallback((index) => {
       const nextDataSource = myDataSource.slice();
       [nextDataSource[index], nextDataSource[index+1]] = [nextDataSource[index+1], nextDataSource[index]];
       handleChange(nextDataSource);
-    }, [myDataSource]);
+    }, [myDataSource, handleChange]);
      const handleClickOnAdd = useCallback((index) => {
       const nextDataSource = myDataSource.slice();
       nextDataSource.splice(index+1, 0, {
@@ -67,7 +67,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
         region: '',
       });
       handleChange(nextDataSource);
-    }, [myDataSource]);
+    }, [myDataSource, handleChange]);
   
      const handleClickOnRemove = useCallback((index) => {
       const nextDataSource = myDataSource.slice();

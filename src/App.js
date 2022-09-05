@@ -53,7 +53,7 @@ function App() {
   };
   const handleClear = useCallback(() => {
     setDataSource([]);
-  }, [dataSource]);
+  }, []);
   const handleExportJson = useCallback(() => {
     window.localStorage.setItem('lunwen', JSON.stringify(dataSource));
     message.success('导出成功');
@@ -75,7 +75,7 @@ function App() {
         
       }
     }
-  }, [dataSource]);
+  }, []);
   const handleSubmitForm = useCallback((record) => {
     const index = dataSource.findIndex((item) => item.id === record.id);
     if(index !== -1) {
