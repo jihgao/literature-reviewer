@@ -1,3 +1,4 @@
+@import '~antd/dist/antd.css';
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,7 +8,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+.page-view-article{
+  padding: 30px 50px;
+}
+.page-view-article h1{
+  text-align: center;
+}
+.page-view-article p{
+  line-height: 2;
+  font-size: 18px;
+}
+.page-view-article ol{
+  line-height: 2;
+  font-size: 18px;
 }
