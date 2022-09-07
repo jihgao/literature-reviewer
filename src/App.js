@@ -1,187 +1,53 @@
+import React from 'react';
 import {
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  Card,
-  Button,
-  Space,
-  message,
-  Radio,
-} from 'antd';
-import {
-  PlusOutlined,
-  ExportOutlined,
-  UploadOutlined,
-  TableOutlined,
-  FileTextOutlined,
-  DeleteOutlined 
-} from '@ant-design/icons';
-
-import MyTableView from './TableView';
-import ArticleView from './ArticleView';
-import FormCreate from './FormCreate';
+  Routes,
+  Route,
+  Link,
+  useLocation
+} from "react-router-dom";
+import { ConfigProvider, Layout, Menu } from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+import HomePage from './Home';
+import FormatterPage from './Formatter';
 
 
+const { Header, Content } = Layout;
+moment.locale('zh-cn');
 
-function App() {
-  const [editRecord, setEditRecord] = useState();
-  const [view, setView] = useState('table');
-  const [dataSource, setDataSource] = useState([]);
-  useEffect(() => {
-    const cached = window.localStorage.getItem('lunwen');
-    if(cached){
-      try {
-        const nextDataSource = JSON.parse(cached);
-        if(Array.isArray(nextDataSource)){
-          setDataSource(nextDataSource);
-        }
-      } catch (error) {
-        
-      }
-    }
-  }, []);
-  const handleAddRecord = () => {
-    setEditRecord({
-      index: uuidv4(),
-      id: uuidv4(),
-      isNew: true,
-      createdAt: Date.now()
-    });
-  };
-  const handleClear = useCallback(() => {
-    setDataSource([]);
-  }, []);
-  const handleExportJson = useCallback(() => {
-    window.localStorage.setItem('lunwen', JSON.stringify(dataSource));
-    message.success('导出成功');
-  }, [dataSource]);
-  const handleImportJson = useCallback(() => {
-    const cached = window.localStorage.getItem('lunwen');
-    if(cached){
-      try {
-        const nextDataSource = JSON.parse(cached);
-        if(Array.isArray(nextDataSource)){
-          setDataSource(nextDataSource.map((record) => {
-            return {
-              ...record,
-              createdAt: Date.now()
-            };
-          }));
-        }
-      } catch (error) {
-        
-      }
-    }
-  }, []);
-  const handleSubmitForm = useCallback((record) => {
-    const index = dataSource.findIndex((item) => item.id === record.id);
-    if(index !== -1) {
-      dataSource.splice(index, 1, record);
-    } else {
-      dataSource.push(record);
-    }
-    setDataSource(dataSource.slice());
-    setEditRecord();
-  }, [dataSource]);
-
-  const tagListAll = dataSource.reduce((ret, record) => {
-    if(Array.isArray(record.tags)){
-      ret.push(...record.tags);
-    } else if(record.tags){
-      ret.push(record.tags);
-    }
-    return ret;
-  }, []);
-  const tagList = Array.from(new Set(tagListAll));
+export default function App() {
+  let location = useLocation();
+  console.log({location});
   return (
-    <div className="App">
-      <Card
-        title={
-          <div style={{textAlign: 'left'}}>
-            <Radio.Group value={view} onChange={(evt) => setView(evt.target.value)}>
-              <Radio.Button value={'table'}>
-                <Space>
-                  <TableOutlined />
-                  表格视图
-                </Space>
-              </Radio.Button>
-              <Radio.Button value={'article'}>
-                <Space>
-                  <FileTextOutlined />
-                  文章视图
-                </Space>
-              </Radio.Button>
-            </Radio.Group>
-          </div>
-        }
-        extra={
-          <Space>
-            <Button 
-              onClick={handleImportJson}
-              icon={<UploadOutlined />}
-              type="primary"
-              ghost
-            >
-              载入
-            </Button>
-            <Button 
-              onClick={handleClear}
-              icon={<DeleteOutlined  />}
-              type="primary"
-              ghost
-            >
-              清空
-            </Button>
-            <Button 
-              onClick={handleExportJson}
-              icon={<ExportOutlined />}
-              type="primary"
-              ghost
-            >
-              保存
-            </Button>
-            <Button 
-              onClick={handleAddRecord}
-              icon={<PlusOutlined />}
-              type="primary"
-            >
-              添加
-            </Button>
-          </Space>
-        }
-      >
-        {
-          view === 'table' && (
-            <MyTableView 
-              dataSource={dataSource} 
-              onEditRecord={setEditRecord}
-              onChange={setDataSource}
-            />
-          )
-        }
-        {
-          view === 'article' && (
-            <ArticleView dataSource={dataSource} />
-          )
-        }
-        {
-          editRecord && (
-            <FormCreate 
-              value={editRecord}
-              visible={editRecord}
-              tagList={tagList}
-              index={dataSource.length}
-              onCancel={() => setEditRecord()}
-              onSubmit={handleSubmitForm}
-            />
-          )
-        }
-      </Card>
-    </div>
-  );
+    <ConfigProvider locale={zhCN}>
+      <Layout className="layout">
+        <Header className="layout__header">
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            activeKey={location.pathname}
+            selectedKeys={[location.pathname].filter(Boolean)}
+          >
+            <Menu.Item key="/">
+              <Link to='/'>
+                主页
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/fmt">
+              <Link to='/fmt'>
+                参考文献格式化
+              </Link>
+            </Menu.Item>
+          </Menu>
+        </Header>
+        <Content className="layout__content">
+          <Routes>
+            <Route path="/fmt" element={<FormatterPage />} />
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </Content>
+      </Layout>
+    </ConfigProvider>
+  )
 }
-
-export default App;

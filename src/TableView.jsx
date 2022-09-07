@@ -31,7 +31,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
       if(onChange){
         onChange(nextDataSource);
       }
-    }, [myDataSource, onChange]);
+    }, [onChange]);
     const handleClickOnCopy = useCallback((index) => {
       const nextDataSource = myDataSource.slice();
       const newRecord = {
@@ -73,7 +73,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
       const nextDataSource = myDataSource.slice();
       nextDataSource.splice(index, 1);
       handleChange(nextDataSource);
-    }, [myDataSource]);
+    }, [handleChange, myDataSource]);
   
     const getRecordIndex = (index) => {
       return pagination.pageSize*(pagination.current -1) + index;
@@ -101,7 +101,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
         dataIndex: 'content',
         key: 'content',
         title: '内容',
-        width: 160,
+        width: 150,
       },
       {
         dataIndex: 'year',
@@ -125,7 +125,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
         dataIndex: 'reference',
         key: 'reference',
         title: '引用',
-        width: 180,
+        width: 170,
       },
       {
         dataIndex: 'createdAt',
@@ -182,7 +182,7 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
           showQuickJumper: true,
           total: myDataSource.length
         }}
-        scroll={{y: 'calc(100vh - 240px)'}}
+        scroll={{y: 'calc(100vh - 330px)'}}
         onChange={handleTableChange}
       />
     );

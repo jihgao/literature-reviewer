@@ -7,8 +7,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-
+.layout__header{
+  padding-inline: 24px;
+}
+.layout__content{
+  background: white;
+  padding: 16px 24px;
+}
+.page-home__card .ant-card-body,
+.page-home__card .ant-card-head
+{
+  padding-inline: 0;
+}
 .page-view-article{
   padding: 30px 50px;
 }
@@ -23,3 +33,7 @@ body {
   line-height: 2;
   font-size: 18px;
 }
+
+/* .page-tools{
+  width: 100%;
+} */
