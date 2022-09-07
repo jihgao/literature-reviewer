@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback, useEffect, useRef} from 'react';
 import {
   Input,
   Typography,
@@ -18,8 +18,8 @@ const {
 } = Input;
 
 const getListFromText = (text) => {
-  const matchText = text.replace(/］/gm, ']').replace(/［/gm, '[').replace(/．/gm, '.');
-  const reg = /\[(\d+)\]([^[\]]+)/gm;
+  const matchText = text.replace(/］/gm, ']').replace(/［/gm, '[').replace(/．/gm, '.').replace(/\[(\d+)\]/gm, '=$1=');
+  const reg = /=(\d+)=([^=]+)/gm;
   let ret = reg.exec(matchText);
   let nextList = [];
   while(ret) {
@@ -37,6 +37,7 @@ const getListFromText = (text) => {
 const Tool = () => {
   const [text, setText] = useState('');
   const [list, setList] = useState([]);
+  const isPaste = useRef(false);
   useEffect(() => {
     const cachedText = window.localStorage.getItem('fmt-text');
     if(cachedText){
@@ -46,18 +47,19 @@ const Tool = () => {
     }
   }, []);
   const handleTextChange = useCallback((evt) => {
-    setText(() => evt.target.value);
-  }, []);
-  const handleTextPaste = useCallback((evt) => {
-    let nextText = evt.clipboardData.getData("Text") || '';
-    if(text) {
-      nextText = `${text.trim()}\n${nextText.trim()}\n`;
+    let nextText = evt.target.value;
+    if(isPaste.current) {
+      const list = getListFromText(nextText);
+      setText(() => `${list.map((item) => `[${item.index}] ${item.reference}`).join('\n')}\n`);
+      setList(list);
+      isPaste.current = false;
+    } else {
+      setText(nextText);
     }
-    const list = getListFromText(nextText);
-    setText(() => `${list.map((item) => `[${item.index}] ${item.reference}`).join('\n')}\n`);
-    setList(list);
-    evt.preventDefault();
-  }, [text]);
+  }, []);
+  const handleTextPaste = useCallback(() => {
+    isPaste.current = true;
+  }, []);
   const handleFormatText = useCallback(() => {
     const list = getListFromText(text);
     setText(() => `${list.map((item) => `[${item.index}] ${item.reference}`).join('\n')}\n`);

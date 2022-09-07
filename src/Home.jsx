@@ -46,9 +46,6 @@ function HomePage() {
       }
     }
   }, []);
-  const handleTextAreaChange = (evt) => {
-    console.log({evt});
-  };
   const handleAddRecord = () => {
     setEditRecord({
       index: uuidv4(),
@@ -177,7 +174,7 @@ function HomePage() {
         }
         {
           view === 'tools' && (
-            <TextArea onChange={handleTextAreaChange} />
+            <TextArea />
           )
         }
         {

@@ -18,7 +18,6 @@ moment.locale('zh-cn');
 
 export default function App() {
   let location = useLocation();
-  console.log({location});
   return (
     <ConfigProvider locale={zhCN}>
       <Layout className="layout">
