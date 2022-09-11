@@ -9,6 +9,10 @@ import {
   Space,
   Divider
 } from 'antd';
+import {
+  getReferenceListFromText
+} from '@utils';
+import './index.less';
 
 const {
   Paragraph
@@ -17,31 +21,14 @@ const {
   TextArea
 } = Input;
 
-const getListFromText = (text) => {
-  const matchText = text.replace(/］/gm, ']').replace(/［/gm, '[').replace(/．/gm, '.').replace(/\[(\d+)\]/gm, '=$1=');
-  const reg = /=(\d+)=([^=]+)/gm;
-  let ret = reg.exec(matchText);
-  let nextList = [];
-  while(ret) {
-    const index = ret[1].trim();
-    const reference = ret[2].trim();
-    nextList.push({
-      index,
-      reference,
-    });
-    ret = reg.exec(matchText);
-  }
-  return nextList;
-};
-
-const Tool = () => {
+const FormatterTool = () => {
   const [text, setText] = useState('');
   const [list, setList] = useState([]);
   const isPaste = useRef(false);
   useEffect(() => {
     const cachedText = window.localStorage.getItem('fmt-text');
     if(cachedText){
-      const list = getListFromText(cachedText);
+      const list = getReferenceListFromText(cachedText);
       setText(() => `${list.map((item) => `[${item.index}] ${item.reference}`).join('\n')}\n`);
       setList(list);
     }
@@ -49,7 +36,7 @@ const Tool = () => {
   const handleTextChange = useCallback((evt) => {
     let nextText = evt.target.value;
     if(isPaste.current) {
-      const list = getListFromText(nextText);
+      const list = getReferenceListFromText(nextText);
       setText(() => `${list.map((item) => `[${item.index}] ${item.reference}`).join('\n')}\n`);
       setList(list);
       isPaste.current = false;
@@ -61,7 +48,7 @@ const Tool = () => {
     isPaste.current = true;
   }, []);
   const handleFormatText = useCallback(() => {
-    const list = getListFromText(text);
+    const list = getReferenceListFromText(text);
     setText(() => `${list.map((item) => `[${item.index}] ${item.reference}`).join('\n')}\n`);
     setList(list);
   }, [text]);
@@ -120,4 +107,4 @@ const Tool = () => {
   )
 }
 
-export default Tool;
+export default FormatterTool;

@@ -9,10 +9,10 @@ import { ConfigProvider, Layout, Menu } from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import PreferencePage from './Preference';
-import ReferencePage from './Reference';
-import FormatterPage from './Formatter';
-import ArticlePage from './Article';
+import PreferencePage from './pages/preference';
+import ReferencesPage from './pages/references';
+import FormatterToolPage from './pages/formatter-tool';
+import PreviewPage from './pages/preview';
 
 const { Header, Content } = Layout;
 moment.locale('zh-cn');
@@ -34,17 +34,17 @@ export default function App() {
                 1.前言
               </Link>
             </Menu.Item>
-            <Menu.Item key="/reference">
-              <Link to='/reference'>
+            <Menu.Item key="/references">
+              <Link to='/references'>
                 2. 文献综述
               </Link>
             </Menu.Item>
-            <Menu.Item key="/article">
-              <Link to='/article'>
+            <Menu.Item key="/preview">
+              <Link to='/preview'>
                 3. 文章预览
               </Link>
             </Menu.Item>
-            <Menu.SubMenu title="其他工具" key="/tools">
+            <Menu.SubMenu title="其他工具">
               <Menu.Item key="/fmt">
                 <Link to='/fmt'>
                   参考文献格式化
@@ -56,9 +56,9 @@ export default function App() {
         <Content className="layout__content">
           <Routes>
             <Route path="/" element={<PreferencePage />} />
-            <Route path="/fmt" element={<FormatterPage />} />
-            <Route path="/article" element={<ArticlePage />} />
-            <Route path="/reference" element={<ReferencePage />} />
+            <Route path="/fmt" element={<FormatterToolPage />} />
+            <Route path="/preview" element={<PreviewPage />} />
+            <Route path="/references" element={<ReferencesPage />} />
           </Routes>
         </Content>
       </Layout>

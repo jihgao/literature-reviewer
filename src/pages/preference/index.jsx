@@ -6,7 +6,9 @@ import {
   Col,
   Divider
 } from 'antd';
-import usePreference from './hooks/usePreference';
+import usePreference from '@hooks/usePreference';
+import './index.less';
+
 const {
   Paragraph
 } = Typography;
@@ -14,7 +16,7 @@ const {
   TextArea
 } = Input;
 
-const Tool = () => {
+const PreferencePage = () => {
   const [text, saveText] = usePreference('');
   const handleTextChange = useCallback((evt) => {
     let nextText = evt.target.value;
@@ -56,4 +58,4 @@ const Tool = () => {
   )
 }
 
-export default Tool;
+export default PreferencePage;

@@ -14,7 +14,7 @@ import {
 
 const { TextArea } = Input;
 
-const FormCreate = ({visible, onCancel, tagList, value, onSubmit}) => {
+const ReferenceForm = ({visible, onCancel, tagList, value, onSubmit}) => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     if(onSubmit){
@@ -180,4 +180,4 @@ const FormCreate = ({visible, onCancel, tagList, value, onSubmit}) => {
   );
 };
 
-export default FormCreate;
+export default ReferenceForm;

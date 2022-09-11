@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import {
   HashRouter as Router,
 } from "react-router-dom";
-import './index.less';
+import '@style/global.less';
 import App from './App';
 
 

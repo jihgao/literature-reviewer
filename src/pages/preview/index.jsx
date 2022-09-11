@@ -3,25 +3,12 @@ import {
   Row,
   Col
 } from 'antd';
-import usePreference from './hooks/usePreference';
-import useReferenceList from './hooks/useReferenceList';
-
-const isFunction = (arg) => Object.prototype.toString.call(arg) === '[object Function]';
-// const isString = (arg) => Object.prototype.toString.call(arg) === '[object String]';
-const groupBy = (arr, keyOrFn) => {
-  return arr.reduce((ret, record) => {
-    if(record){
-      let mapKey = isFunction(keyOrFn) ? keyOrFn(record) : record[keyOrFn];
-      if(mapKey) {
-        if(!ret[mapKey]) {
-          ret[mapKey] = [];
-        }
-        ret[mapKey].push(record);
-      }
-    }
-    return ret;
-  }, {});
-};
+import usePreference from '@hooks/usePreference';
+import useReferenceList from '@hooks/useReferenceList';
+import './index.less';
+import {
+  groupBy
+} from '@utils';
 
 function tagGroupByIterator(record) {
     if(Array.isArray(record.tags)){
@@ -54,7 +41,7 @@ const Preference = () => {
   }
 };
 
-const ArticleView = () => {
+const PreviewPage = () => {
   const $container = createRef();
   const [dataSource] = useReferenceList([]);
   const [wordCount, setWordCount] = useState(0);
@@ -139,4 +126,4 @@ const ArticleView = () => {
   )
 };
 
-export default ArticleView;
+export default PreviewPage;
