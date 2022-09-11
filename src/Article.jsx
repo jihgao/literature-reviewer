@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import usePreference from './hooks/usePreference';
+import useReferenceList from './hooks/useReferenceList';
 
 const isFunction = (arg) => Object.prototype.toString.call(arg) === '[object Function]';
 // const isString = (arg) => Object.prototype.toString.call(arg) === '[object String]';
@@ -50,21 +51,14 @@ const Preference = () => {
 };
 
 const ArticleView = () => {
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource] = useReferenceList([]);
+  const [myDataSource, setMyDataSource] = useState([]);
   useEffect(() => {
-    const cached = window.localStorage.getItem('lunwen');
-    if(cached){
-      try {
-        const nextDataSource = JSON.parse(cached);
-        if(Array.isArray(nextDataSource)){
-          setDataSource(nextDataSource);
-        }
-      } catch (error) {
-        
-      }
+    if(Array.isArray(dataSource)) {
+      setMyDataSource(dataSource.filter((record) => record.active));
     }
-  }, []);
-  const regions = groupBy(dataSource, 'region');
+  }, [dataSource]);
+  const regions = groupBy(myDataSource, 'region');
   let references = [];
   return (
     <article className="page-view-article">

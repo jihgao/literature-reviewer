@@ -8,6 +8,7 @@ import {
   Table,
   Row,
   Col,
+  Switch
 } from 'antd';
 import {
   PlusOutlined,
@@ -79,58 +80,95 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
     useEffect(() => {
       setMyDataSource(dataSource);
     }, [dataSource]);
+    const handleTableChange = useCallback((nextPagination) => {
+      setPagination(nextPagination);
+    }, []);
     const handleChange = useCallback((nextDataSource) => {
       setMyDataSource(nextDataSource);
       if(onChange){
         onChange(nextDataSource);
       }
     }, [onChange]);
-    const handleClickOnCopy = useCallback((index) => {
-      const nextDataSource = myDataSource.slice();
-      const newRecord = {
-        ...nextDataSource[index],
-        id: Date.now()
-      };
-      if(Array.isArray(newRecord.tags)){
-        newRecord.tags = newRecord.tags.slice();
-      }
-      nextDataSource.splice(index, 0, newRecord);
-      handleChange(nextDataSource);
-    }, [myDataSource, handleChange]);
-    const handleClickOnUp = useCallback((index) => {
-      const nextDataSource = myDataSource.slice();
-      [nextDataSource[index - 1], nextDataSource[index]] = [nextDataSource[index], nextDataSource[index - 1]];
-      handleChange(nextDataSource);
-    }, [myDataSource, handleChange]);
-    const handleTableChange = useCallback((nextPagination) => {
-      setPagination(nextPagination);
-    }, []);
-  
-     const handleClickOnDown = useCallback((index) => {
-      const nextDataSource = myDataSource.slice();
-      [nextDataSource[index], nextDataSource[index+1]] = [nextDataSource[index+1], nextDataSource[index]];
-      handleChange(nextDataSource);
-    }, [myDataSource, handleChange]);
-     const handleClickOnAdd = useCallback((index) => {
-      const nextDataSource = myDataSource.slice();
-      nextDataSource.splice(index+1, 0, {
-        id: Date.now(),
-        title: '',
-        content: '',
-        region: '',
+    const handleClickOnCopy = useCallback((target) => {
+      const targetIndex = myDataSource.findIndex((record) => {
+        return record.id === target.id;
       });
-      handleChange(nextDataSource);
+      if(targetIndex !== -1) {
+        const nextDataSource = myDataSource.slice();
+        const newRecord = {
+          ...nextDataSource[targetIndex],
+          id: Date.now()
+        };
+        if(Array.isArray(newRecord.tags)){
+          newRecord.tags = newRecord.tags.slice();
+        }
+        nextDataSource.splice(targetIndex, 0, newRecord);
+        handleChange(nextDataSource);
+      }
+    }, [myDataSource, handleChange]);
+    const handleClickOnUp = useCallback((target) => {
+      const targetIndex = myDataSource.findIndex((record) => {
+        return record.id === target.id;
+      });
+      if(targetIndex !== -1) {
+        const nextDataSource = myDataSource.slice();
+        [nextDataSource[targetIndex - 1], nextDataSource[targetIndex]] = [nextDataSource[targetIndex], nextDataSource[targetIndex - 1]];
+        handleChange(nextDataSource);
+      }
+    }, [myDataSource, handleChange]);
+    const handleClickOnDown = useCallback((target) => {
+      const targetIndex = myDataSource.findIndex((record) => {
+        return record.id === target.id;
+      });
+      if(targetIndex !== -1) {
+        const nextDataSource = myDataSource.slice();
+        [nextDataSource[targetIndex], nextDataSource[targetIndex+1]] = [nextDataSource[targetIndex+1], nextDataSource[targetIndex]];
+        handleChange(nextDataSource);
+      }
+    }, [myDataSource, handleChange]);
+    const handleClickOnAdd = useCallback((target) => {
+      const targetIndex = myDataSource.findIndex((record) => {
+        return record.id === target.id;
+      });
+      if(targetIndex !== -1) {
+        const nextDataSource = myDataSource.slice();
+        nextDataSource.splice(targetIndex+1, 0, {
+          id: Date.now(),
+          title: '',
+          content: '',
+          region: '',
+        });
+        handleChange(nextDataSource);
+      }
     }, [myDataSource, handleChange]);
   
-     const handleClickOnRemove = useCallback((index) => {
-      const nextDataSource = myDataSource.slice();
-      nextDataSource.splice(index, 1);
-      handleChange(nextDataSource);
+    const handleClickOnRemove =  useCallback((target) => {
+      const targetIndex = myDataSource.findIndex((record) => {
+        return record.id === target.id;
+      });
+      if(targetIndex !== -1) {
+        const nextDataSource = myDataSource.slice();
+        nextDataSource.splice(targetIndex, 1);
+        handleChange(nextDataSource);
+      }
     }, [handleChange, myDataSource]);
-  
-    const getRecordIndex = (index) => {
-      return pagination.pageSize*(pagination.current -1) + index;
-    };
+
+    const handleClickOnToggle = useCallback((target) => {
+      const targetIndex = myDataSource.findIndex((record) => {
+        return record.id === target.id;
+      });
+      if(targetIndex !== -1) {
+        const nextDataSource = myDataSource.slice();
+        const targetRecord = nextDataSource[targetIndex];
+        const newRecord = {
+          ...targetRecord,
+          active: !targetRecord?.active,
+        };
+        nextDataSource.splice(targetIndex, 1, newRecord);
+        handleChange(nextDataSource);
+      }
+    }, [handleChange, myDataSource]);
+
     const rowClassName = (record) => {
       if(record.content?.trim() === record.originContent?.trim()) {
         return `table-row--need-update`;
@@ -146,13 +184,13 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
         dataIndex: 'author',
         key: 'author',
         title: '作者',
-        width: 50,
+        width: 60,
       },
       {
         dataIndex: 'reference',
         key: 'reference',
         title: '引用',
-        width: 170,
+        width: 200,
       },
       {
         dataIndex: 'tags',
@@ -171,42 +209,81 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
         },
       },
       {
+        dataIndex: 'active',
+        key: 'active',
+        title: '启用',
+        width: 40,
+        render: (__, record) => {
+          return (
+            <Switch 
+              defaultChecked={record.active} 
+              onClick={handleClickOnToggle.bind(null, record)} 
+            />
+          );
+        }
+      },
+      {
         dataIndex: 'operation',
         key: 'operation',
         title: '操作',
         align: 'right',
         width: 130,
         render: (__, record, index) => {
-          const realIndex = getRecordIndex(index);
           return (
             <Row gutter={[0, 4]} wrap align="end">
               <Col flex="none">
-                <Button type="text" onClick={() => onEditRecord(record)}>
+                <Button 
+                  style={{padding: 0, aspectRatio: 1}} 
+                  type="text" 
+                  onClick={() => onEditRecord(record)}
+                >
                   <EditOutlined />
                 </Button>
               </Col>
               <Col flex="none">
-                <Button disabled={index === 0} type="text" onClick={handleClickOnUp.bind(null, realIndex)}>
+                <Button 
+                  style={{padding: 0, aspectRatio: 1}}
+                  disabled={index === 0} 
+                  type="text" 
+                  onClick={handleClickOnUp.bind(null, record)}
+                >
                   <UpOutlined />
                 </Button>
               </Col>
               <Col flex="none">
-                <Button disabled={index === maxIndex}  type="text"  onClick={handleClickOnDown.bind(null, realIndex)}>
+                <Button 
+                  style={{padding: 0, aspectRatio: 1}} 
+                  disabled={index === maxIndex}  
+                  type="text"
+                  onClick={handleClickOnDown.bind(null, record)}
+                >
                   <DownOutlined />
                 </Button>
               </Col>
               <Col flex="none">
-                <Button type="text" onClick={handleClickOnAdd.bind(null, realIndex)}>
+                <Button 
+                  style={{padding: 0, aspectRatio: 1}} 
+                  type="text"
+                  onClick={handleClickOnAdd.bind(null, record)}
+                >
                   <PlusOutlined />
                 </Button>
               </Col>
               <Col flex="none">
-                <Button type="text" onClick={handleClickOnCopy.bind(null, realIndex)}>
+                <Button 
+                  style={{padding: 0, aspectRatio: 1}} 
+                  type="text"
+                   onClick={handleClickOnCopy.bind(null, record)}
+                >
                   <CopyOutlined />
                 </Button>
               </Col>
               <Col flex="none">
-                <Button type="text" onClick={handleClickOnRemove.bind(null, realIndex)}>
+                <Button 
+                  style={{padding: 0, aspectRatio: 1}} 
+                  type="text"
+                  onClick={handleClickOnRemove.bind(null, record)}
+                >
                   <DeleteOutlined />
                 </Button>
               </Col>

@@ -4,8 +4,6 @@ import {
   Typography,
   Row,
   Col,
-  Button,
-  Space,
   Divider
 } from 'antd';
 import usePreference from './hooks/usePreference';
@@ -17,23 +15,13 @@ const {
 } = Input;
 
 const Tool = () => {
-  const [text, updateText, saveText] = usePreference('');
+  const [text, saveText] = usePreference('');
   const handleTextChange = useCallback((evt) => {
     let nextText = evt.target.value;
-    updateText(nextText);
-  }, [updateText]);
-
-  const handleSaveText = useCallback(() => {
-    saveText(text);
-  }, [text, saveText]);
+    saveText(nextText);
+  }, [saveText]);
   return (
     <Row className="page-preference" gutter={[16,16]} align="top">
-      <Col lg={12} sm={16} md={18} />
-      <Col lg={12} sm={8} md={6} style={{textAlign: 'right', alignSelf: 'center'}}>
-        <Space>
-          <Button type="primary" onClick={handleSaveText}>保存</Button>
-        </Space>
-      </Col>
       <Col lg={12} sm={24}>
         <TextArea 
           value={text}
