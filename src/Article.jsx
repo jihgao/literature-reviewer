@@ -28,13 +28,13 @@ function tagGroupByIterator(record) {
 
 const Preference = () => {
   const [text] = usePreference('');
-  const pList = text?.split("\n");
+  const pList = text?.split("\n")?.filter(Boolean);
   if(pList?.length) {
     return (
       <>
         <h2>前言</h2>
         {
-          pList.filter(Boolean).map((pText, index) => (
+          pList.map((pText, index) => (
             <p
               key={index}
             >

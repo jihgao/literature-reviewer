@@ -132,8 +132,8 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
       return pagination.pageSize*(pagination.current -1) + index;
     };
     const rowClassName = (record) => {
-      if(record.content !== record.originContent) {
-        return `table-row--edited`;
+      if(record.content?.trim() === record.originContent?.trim()) {
+        return `table-row--need-update`;
       } else {
         return '';
       }
