@@ -21,7 +21,7 @@ const Tool = () => {
   const handleTextChange = useCallback((evt) => {
     let nextText = evt.target.value;
     updateText(nextText);
-  }, []);
+  }, [updateText]);
 
   const handleSaveText = useCallback(() => {
     saveText(text);
