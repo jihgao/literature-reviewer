@@ -1,4 +1,8 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useLayoutEffect, createRef} from 'react';
+import {
+  Row,
+  Col
+} from 'antd';
 import usePreference from './hooks/usePreference';
 import useReferenceList from './hooks/useReferenceList';
 
@@ -51,60 +55,74 @@ const Preference = () => {
 };
 
 const ArticleView = () => {
+  const $container = createRef();
   const [dataSource] = useReferenceList([]);
+  const [wordCount, setWordCount] = useState(0);
   const [myDataSource, setMyDataSource] = useState([]);
   useEffect(() => {
     if(Array.isArray(dataSource)) {
       setMyDataSource(dataSource.filter((record) => record.active));
     }
   }, [dataSource]);
+  useLayoutEffect(() => {
+    setWordCount($container?.current?.textContent?.length);
+  }, [dataSource, $container]);
   const regions = groupBy(myDataSource, 'region');
   let references = [];
   return (
     <article className="page-view-article">
-      <h1>文献综述</h1>
-      <Preference />
-      {
-        Object.keys(regions).map((region) => {
-          const tagsGroup = groupBy(regions[region], tagGroupByIterator);
-          return (
-            <section key={region}>
-              <h2>{region}研究现状</h2>
-              {
-                Object.keys(tagsGroup).map((tag, ii) => {
-                  const list = tagsGroup[tag];
-                  list.sort((articleA, articleB) => {
-                    if(articleA.year > articleB.year) {
-                      return 1;
-                    } else {
-                      return -1;
-                    }
-                  });
-                  return (
-                    <section key={tag}>
-                      <h3>({ii+1})关于{tag}方面的研究</h3>
-                      <p>
-                        {
-                          list.map(({id, content, reference}) => {
-                            references.push(reference);
-                            const referenceIndex = references.length;
-                            return (
-                              <React.Fragment key={id}>
-                                {content}
-                                <sup>{`[${referenceIndex}]`}</sup>
-                              </React.Fragment>
-                            );
-                          })
-                        }
-                      </p>
-                    </section>
-                  )
-                })
-              }
-            </section>
-          );
-        })
-      }
+      <Row>
+        <Col flex={1} />
+        <Col flex={'none'}>
+          <span>字数: {wordCount || 0}</span>
+        </Col>
+      </Row>
+      <div ref={$container}>
+        <h1>文献综述</h1>
+        <Preference />
+        {
+          Object.keys(regions).map((region) => {
+            const tagsGroup = groupBy(regions[region], tagGroupByIterator);
+            return (
+              <section key={region}>
+                <h2>{region}研究现状</h2>
+                {
+                  Object.keys(tagsGroup).map((tag, ii) => {
+                    const list = tagsGroup[tag];
+                    list.sort((articleA, articleB) => {
+                      if(articleA.year > articleB.year) {
+                        return 1;
+                      } else {
+                        return -1;
+                      }
+                    });
+                    return (
+                      <section key={tag}>
+                        <h3>({ii+1})关于{tag}方面的研究</h3>
+                        <p>
+                          {
+                            list.map(({id, content, reference}) => {
+                              references.push(reference);
+                              const referenceIndex = references.length;
+                              return (
+                                <React.Fragment key={id}>
+                                  {content}
+                                  <sup>{`[${referenceIndex}]`}</sup>
+                                </React.Fragment>
+                              );
+                            })
+                          }
+                        </p>
+                      </section>
+                    )
+                  })
+                }
+              </section>
+            );
+          })
+        }
+      </div>
+
       <h2>引用文献</h2>
       <ol>
         {
