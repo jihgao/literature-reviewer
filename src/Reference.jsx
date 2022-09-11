@@ -75,7 +75,7 @@ function ReferencePage() {
       }
     }
   }, []);
-  const handleSubmitForm = useCallback((record) => {
+  const handleSubmitForm = useCallback(({isNew, ...record}) => {
     const index = dataSource.findIndex((item) => item.id === record.id);
     if(index !== -1) {
       dataSource.splice(index, 1, record);

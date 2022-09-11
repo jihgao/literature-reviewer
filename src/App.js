@@ -14,8 +14,6 @@ import ReferencePage from './Reference';
 import FormatterPage from './Formatter';
 import ArticlePage from './Article';
 
-
-
 const { Header, Content } = Layout;
 moment.locale('zh-cn');
 

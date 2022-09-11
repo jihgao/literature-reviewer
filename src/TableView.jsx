@@ -18,6 +18,58 @@ import {
   EditOutlined
 } from '@ant-design/icons';
 
+function ReferenceDetail({record}) {
+  return (
+    <Row wrap gutter={[8, 16]}>
+      <Col span={24}>
+        <Row gutter={[8, 16]}>
+          <Col span={12}>
+            <Row gutter={[8, 8]} align="top">
+              <Col>当前内容:</Col>
+              <Col>{record.content}</Col>
+            </Row>
+          </Col>
+          <Col span={12}>
+            <Row gutter={[8, 8]} align="top">
+              <Col>原始内容:</Col>
+              <Col>{record.originContent}</Col>
+            </Row>
+          </Col>
+        </Row>
+      </Col>
+      <Col span={6}>
+        <Row gutter={[8, 8]}>
+          <Col>序号:</Col>
+          <Col>{record.index}</Col>
+        </Row>
+      </Col>
+      <Col span={6}>
+        <Row gutter={[8, 8]}>
+          <Col>年份:</Col>
+          <Col>{record.year}</Col>
+        </Row>
+      </Col>
+      <Col span={6}>
+        <Row gutter={[8, 8]}>
+          <Col>国内/国外:</Col>
+          <Col>{record.region}</Col>
+        </Row>
+      </Col>
+      <Col span={6}>
+        <Row gutter={[8, 8]}>
+          <Col>领域:</Col>
+          <Col>{record.tags}</Col>
+        </Row>
+      </Col>
+      <Col  span={6}>
+        <Row>
+          <Col>添加时间: </Col>
+          <Col>{new Date(record.createdAt).toLocaleString()}</Col>
+        </Row>
+      </Col>
+    </Row>
+  )
+}
 export default function TableView({dataSource, keyword, onEditRecord = () => {}, onChange}) {
     const [pagination, setPagination] = useState({
       pageSize: 10,
@@ -79,19 +131,17 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
     const getRecordIndex = (index) => {
       return pagination.pageSize*(pagination.current -1) + index;
     };
+    const rowClassName = (record) => {
+      if(record.content !== record.originContent) {
+        return `table-row--edited`;
+      } else {
+        return '';
+      }
+    }
     const tailLength = Math.ceil(dataSource.length % pagination.pageSize);
    
     const maxIndex = pagination.current > Math.floor(dataSource.length /  pagination.pageSize) ? (tailLength - 1) :  pagination.pageSize;
     const myColumns = [
-      {
-        dataIndex: 'index',
-        key: 'index',
-        title: '序号',
-        width: 40,
-        render: (value, record, index) => {
-          return getRecordIndex(index) + 1;
-        }
-      },
       {
         dataIndex: 'author',
         key: 'author',
@@ -99,10 +149,16 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
         width: 50,
       },
       {
-        dataIndex: 'content',
-        key: 'content',
-        title: '内容',
-        width: 150,
+        dataIndex: 'reference',
+        key: 'reference',
+        title: '引用',
+        width: 170,
+      },
+      {
+        dataIndex: 'tags',
+        key: 'tags',
+        title: '标签',
+        width: 80,
       },
       {
         dataIndex: 'year',
@@ -115,46 +171,15 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
         },
       },
       {
-        dataIndex: 'region',
-        key: 'region',
-        title: '国内外',
-        width: 50,
-      },
-      {
-        dataIndex: 'tags',
-        key: 'tags',
-        title: '标签',
-        width: 80,
-      },
-      {
-        dataIndex: 'reference',
-        key: 'reference',
-        title: '引用',
-        width: 170,
-      },
-      {
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        title: '添加时间',
-        width: 120,
-        sorter: {
-          compare: (a, b) => a.createdAt - b.createdAt,
-          multiple: 2,
-        },
-        render: (createdAt) => {
-          return new Date(createdAt).toLocaleString()
-        }
-      },
-      {
         dataIndex: 'operation',
         key: 'operation',
         title: '操作',
         align: 'right',
-        width: 120,
+        width: 130,
         render: (__, record, index) => {
           const realIndex = getRecordIndex(index);
           return (
-            <Row gutter={[4, 4]} wrap align="end">
+            <Row gutter={[0, 4]} wrap align="end">
               <Col flex="none">
                 <Button type="text" onClick={() => onEditRecord(record)}>
                   <EditOutlined />
@@ -199,9 +224,9 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
     }): myDataSource;
     return (
       <Table
-        tableLayout='fixed'
         columns={myColumns}
         dataSource={filteredDataSource}
+        rowClassName={rowClassName}
         rowKey="id"
         pagination={{
           ...pagination,
@@ -209,6 +234,10 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
           showSizeChanger: true,
           showQuickJumper: true,
           total: filteredDataSource.length
+        }}
+        expandable={{
+          columnWidth: 40,
+          expandedRowRender: record => <ReferenceDetail record={record} />
         }}
         scroll={{y: 'calc(100vh - 330px)'}}
         onChange={handleTableChange}
