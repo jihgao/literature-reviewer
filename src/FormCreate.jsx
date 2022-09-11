@@ -135,6 +135,14 @@ const FormCreate = ({visible, onCancel, tagList, value, onSubmit}) => {
             />
           </Form.Item>
           <Form.Item
+            name="originContent"
+            label="原始内容"
+          >
+            <TextArea 
+              autoSize={{ minRows: 2 }}
+            />
+          </Form.Item>
+          <Form.Item
             name="reference"
             label="引用"
           >

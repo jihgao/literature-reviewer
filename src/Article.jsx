@@ -28,20 +28,25 @@ function tagGroupByIterator(record) {
 
 const Preference = () => {
   const [text] = usePreference('');
-  return (
-    <>
-      <h2>前言</h2>
-      {
-        text?.length && text.split("\n").filter(Boolean).map((pText, index) => (
-          <p
-            key={index}
-          >
-            {pText}
-          </p>
-        ))
-      }
-    </>
-  )
+  const pList = text?.split("\n");
+  if(pList?.length) {
+    return (
+      <>
+        <h2>前言</h2>
+        {
+          pList.filter(Boolean).map((pText, index) => (
+            <p
+              key={index}
+            >
+              {pText}
+            </p>
+          ))
+        }
+      </>
+    );
+  } else {
+    return '';
+  }
 };
 
 const ArticleView = () => {
