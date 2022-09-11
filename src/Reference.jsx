@@ -52,9 +52,9 @@ function ReferencePage() {
       record.active = true;
     }
     if(index !== -1) {
-      dataSource.splice(index, 1, record);
+      dataSource.splice(index, 1, {...record});
     } else {
-      dataSource.push(record);
+      dataSource.push({...record});
     }
     setDataSource(dataSource.slice());
     setEditRecord();

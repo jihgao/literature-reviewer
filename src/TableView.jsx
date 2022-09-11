@@ -79,6 +79,10 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
     const [myDataSource, setMyDataSource] = useState(dataSource);
     useEffect(() => {
       setMyDataSource(dataSource);
+      setPagination({
+        pageSize: 10,
+        current: 1,
+      });
     }, [dataSource]);
     const handleTableChange = useCallback((nextPagination) => {
       setPagination(nextPagination);
@@ -216,7 +220,7 @@ export default function TableView({dataSource, keyword, onEditRecord = () => {},
         render: (__, record) => {
           return (
             <Switch 
-              defaultChecked={record.active} 
+              checked={record.active}
               onClick={handleClickOnToggle.bind(null, record)} 
             />
           );
