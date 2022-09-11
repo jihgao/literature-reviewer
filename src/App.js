@@ -9,8 +9,11 @@ import { ConfigProvider, Layout, Menu } from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import HomePage from './Home';
+import PreferencePage from './Preference';
+import ReferencePage from './Reference';
 import FormatterPage from './Formatter';
+import ArticlePage from './Article';
+
 
 
 const { Header, Content } = Layout;
@@ -30,20 +33,34 @@ export default function App() {
           >
             <Menu.Item key="/">
               <Link to='/'>
-                主页
+                1.前言
               </Link>
             </Menu.Item>
-            <Menu.Item key="/fmt">
-              <Link to='/fmt'>
-                参考文献格式化
+            <Menu.Item key="/reference">
+              <Link to='/reference'>
+                2. 文献综述
               </Link>
             </Menu.Item>
+            <Menu.Item key="/article">
+              <Link to='/article'>
+                3. 文章预览
+              </Link>
+            </Menu.Item>
+            <Menu.SubMenu title="其他工具" key="/tools">
+              <Menu.Item key="/fmt">
+                <Link to='/fmt'>
+                  参考文献格式化
+                </Link>
+              </Menu.Item>
+            </Menu.SubMenu>
           </Menu>
         </Header>
         <Content className="layout__content">
           <Routes>
+            <Route path="/" element={<PreferencePage />} />
             <Route path="/fmt" element={<FormatterPage />} />
-            <Route path="/" element={<HomePage />} />
+            <Route path="/article" element={<ArticlePage />} />
+            <Route path="/reference" element={<ReferencePage />} />
           </Routes>
         </Content>
       </Layout>

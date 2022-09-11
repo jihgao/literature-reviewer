@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
+import usePreference from './hooks/usePreference';
+
 const isFunction = (arg) => Object.prototype.toString.call(arg) === '[object Function]';
 // const isString = (arg) => Object.prototype.toString.call(arg) === '[object String]';
 const groupBy = (arr, keyOrFn) => {
@@ -24,12 +26,45 @@ function tagGroupByIterator(record) {
     }
 }
 
-const ArticleView = ({dataSource}) => {
+const Preference = () => {
+  const [text] = usePreference('');
+  return (
+    <>
+      <h2>前言</h2>
+      {
+        text?.length && text.split("\n").filter(Boolean).map((pText, index) => (
+          <p
+            key={index}
+          >
+            {pText}
+          </p>
+        ))
+      }
+    </>
+  )
+};
+
+const ArticleView = () => {
+  const [dataSource, setDataSource] = useState([]);
+  useEffect(() => {
+    const cached = window.localStorage.getItem('lunwen');
+    if(cached){
+      try {
+        const nextDataSource = JSON.parse(cached);
+        if(Array.isArray(nextDataSource)){
+          setDataSource(nextDataSource);
+        }
+      } catch (error) {
+        
+      }
+    }
+  }, []);
   const regions = groupBy(dataSource, 'region');
   let references = [];
   return (
     <article className="page-view-article">
       <h1>文献综述</h1>
+      <Preference />
       {
         Object.keys(regions).map((region) => {
           const tagsGroup = groupBy(regions[region], tagGroupByIterator);
@@ -39,6 +74,13 @@ const ArticleView = ({dataSource}) => {
               {
                 Object.keys(tagsGroup).map((tag, ii) => {
                   const list = tagsGroup[tag];
+                  list.sort((articleA, articleB) => {
+                    if(articleA.year > articleB.year) {
+                      return 1;
+                    } else {
+                      return -1;
+                    }
+                  });
                   return (
                     <section key={tag}>
                       <h3>({ii+1})关于{tag}方面的研究</h3>
@@ -46,9 +88,11 @@ const ArticleView = ({dataSource}) => {
                         {
                           list.map(({id, content, reference}) => {
                             references.push(reference);
+                            const referenceIndex = references.length;
                             return (
                               <React.Fragment key={id}>
                                 {content}
+                                <sup>{`[${referenceIndex}]`}</sup>
                               </React.Fragment>
                             );
                           })

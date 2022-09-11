@@ -9,29 +9,25 @@ import {
   Button,
   Space,
   message,
-  Radio,
   Input
 } from 'antd';
 import {
   PlusOutlined,
   ExportOutlined,
   UploadOutlined,
-  TableOutlined,
-  FileTextOutlined,
   DeleteOutlined 
 } from '@ant-design/icons';
 
 import MyTableView from './TableView';
-import ArticleView from './ArticleView';
 import FormCreate from './FormCreate';
 
 const {
-  TextArea
+  Search
 } = Input;
 
-function HomePage() {
+function ReferencePage() {
   const [editRecord, setEditRecord] = useState();
-  const [view, setView] = useState('table');
+  const [keyword, setKeyword] = useState('');
   const [dataSource, setDataSource] = useState([]);
   useEffect(() => {
     const cached = window.localStorage.getItem('lunwen');
@@ -99,29 +95,22 @@ function HomePage() {
     return ret;
   }, []);
   const tagList = Array.from(new Set(tagListAll));
+  const onSearch = useCallback((nextKeyword) => {
+    setKeyword(nextKeyword);
+  }, []);
   return (
-    <div className="page-home">
+    <div className="page-reference">
       <Card
-        className="page-home__card"
-        title={
-          <div style={{textAlign: 'left'}}>
-            <Radio.Group value={view} onChange={(evt) => setView(evt.target.value)}>
-              <Radio.Button value={'table'}>
-                <Space>
-                  <TableOutlined />
-                  表格
-                </Space>
-              </Radio.Button>
-              <Radio.Button value={'article'}>
-                <Space>
-                  <FileTextOutlined />
-                  文章
-                </Space>
-              </Radio.Button>
-            </Radio.Group>
-          </div>
-        }
+        className="page-reference__card"
         bordered={false}
+        title={
+          <Search
+            placeholder="输入关键词搜素"
+            allowClear
+            onSearch={onSearch}
+            style={{ width: 304 }}
+          />
+        }
         extra={
           <Space>
             <Button 
@@ -158,25 +147,12 @@ function HomePage() {
           </Space>
         }
       >
-        {
-          view === 'table' && (
-            <MyTableView 
-              dataSource={dataSource} 
-              onEditRecord={setEditRecord}
-              onChange={setDataSource}
-            />
-          )
-        }
-        {
-          view === 'article' && (
-            <ArticleView dataSource={dataSource} />
-          )
-        }
-        {
-          view === 'tools' && (
-            <TextArea />
-          )
-        }
+        <MyTableView 
+          dataSource={dataSource} 
+          keyword={keyword}
+          onEditRecord={setEditRecord}
+          onChange={setDataSource}
+        />
         {
           editRecord && (
             <FormCreate 
@@ -194,4 +170,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default ReferencePage;

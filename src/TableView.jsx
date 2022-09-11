@@ -6,7 +6,8 @@ import {
 import {
   Button,
   Table,
-  Space,
+  Row,
+  Col,
 } from 'antd';
 import {
   PlusOutlined,
@@ -17,7 +18,7 @@ import {
   EditOutlined
 } from '@ant-design/icons';
 
-export default function TableView({dataSource, onEditRecord = () => {}, onChange}) {
+export default function TableView({dataSource, keyword, onEditRecord = () => {}, onChange}) {
     const [pagination, setPagination] = useState({
       pageSize: 10,
       current: 1,
@@ -108,11 +109,15 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
         key: 'year',
         title: '年份',
         width: 50,
+        sorter: {
+          compare: (a, b) => a.year - b.year,
+          multiple: 1,
+        },
       },
       {
         dataIndex: 'region',
         key: 'region',
-        title: '国内/国外',
+        title: '国内外',
         width: 50,
       },
       {
@@ -132,6 +137,10 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
         key: 'createdAt',
         title: '添加时间',
         width: 120,
+        sorter: {
+          compare: (a, b) => a.createdAt - b.createdAt,
+          multiple: 2,
+        },
         render: (createdAt) => {
           return new Date(createdAt).toLocaleString()
         }
@@ -141,46 +150,65 @@ export default function TableView({dataSource, onEditRecord = () => {}, onChange
         key: 'operation',
         title: '操作',
         align: 'right',
-        width: 140,
+        width: 120,
         render: (__, record, index) => {
           const realIndex = getRecordIndex(index);
           return (
-            <Space size={0}>
-              <Button type="text" onClick={() => onEditRecord(record)}>
-                <EditOutlined />
-              </Button>
-              <Button disabled={index === 0} type="text" onClick={handleClickOnUp.bind(null, realIndex)}>
-              <UpOutlined />
-              </Button>
-              <Button disabled={index === maxIndex}  type="text"  onClick={handleClickOnDown.bind(null, realIndex)}>
-                <DownOutlined />
-              </Button>
-              <Button type="text" onClick={handleClickOnAdd.bind(null, realIndex)}>
-                <PlusOutlined />
-              </Button>
-              <Button type="text" onClick={handleClickOnCopy.bind(null, realIndex)}>
-                <CopyOutlined />
-              </Button>
-              <Button type="text" onClick={handleClickOnRemove.bind(null, realIndex)}>
-                <DeleteOutlined />
-              </Button>
-            </Space>
+            <Row gutter={[4, 4]} wrap align="end">
+              <Col flex="none">
+                <Button type="text" onClick={() => onEditRecord(record)}>
+                  <EditOutlined />
+                </Button>
+              </Col>
+              <Col flex="none">
+                <Button disabled={index === 0} type="text" onClick={handleClickOnUp.bind(null, realIndex)}>
+                  <UpOutlined />
+                </Button>
+              </Col>
+              <Col flex="none">
+                <Button disabled={index === maxIndex}  type="text"  onClick={handleClickOnDown.bind(null, realIndex)}>
+                  <DownOutlined />
+                </Button>
+              </Col>
+              <Col flex="none">
+                <Button type="text" onClick={handleClickOnAdd.bind(null, realIndex)}>
+                  <PlusOutlined />
+                </Button>
+              </Col>
+              <Col flex="none">
+                <Button type="text" onClick={handleClickOnCopy.bind(null, realIndex)}>
+                  <CopyOutlined />
+                </Button>
+              </Col>
+              <Col flex="none">
+                <Button type="text" onClick={handleClickOnRemove.bind(null, realIndex)}>
+                  <DeleteOutlined />
+                </Button>
+              </Col>
+            </Row>
           )
         }
       }
     ];
+    const filteredDataSource = keyword ? myDataSource.filter((record) => {
+      if(record.author?.indexOf(keyword) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    }): myDataSource;
     return (
       <Table
         tableLayout='fixed'
         columns={myColumns}
-        dataSource={myDataSource}
+        dataSource={filteredDataSource}
         rowKey="id"
         pagination={{
           ...pagination,
           showTotal: (total) => `共${total}`,
           showSizeChanger: true,
           showQuickJumper: true,
-          total: myDataSource.length
+          total: filteredDataSource.length
         }}
         scroll={{y: 'calc(100vh - 330px)'}}
         onChange={handleTableChange}
