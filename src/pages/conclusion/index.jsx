@@ -1,4 +1,3 @@
-
 import React, { useCallback } from 'react';
 import {
   Input,
@@ -7,7 +6,7 @@ import {
   Col,
   Divider
 } from 'antd';
-import usePreference from '@hooks/usePreference';
+import useConclusion from '@hooks/useConclusion';
 import './index.less';
 
 const {
@@ -17,14 +16,14 @@ const {
   TextArea
 } = Input;
 
-const PreferencePage = () => {
-  const [text, saveText] = usePreference('');
+const ConclusionPage = () => {
+  const [text, saveText] = useConclusion('');
   const handleTextChange = useCallback((evt) => {
     let nextText = evt.target.value;
     saveText(nextText);
   }, [saveText]);
   return (
-    <Row className="page-preference" gutter={[16,16]} align="top">
+    <Row className="page-conclusion" gutter={[16,16]} align="top">
       <Col lg={12} sm={24}>
         <TextArea 
           value={text}
@@ -34,7 +33,7 @@ const PreferencePage = () => {
       </Col>
       <Col sm={24} lg={0}>
         <Divider>
-          前言
+          评述
         </Divider>
       </Col>
       <Col lg={12} sm={24}>
@@ -59,4 +58,4 @@ const PreferencePage = () => {
   )
 }
 
-export default PreferencePage;
+export default ConclusionPage;

@@ -1,15 +1,33 @@
 @import (reference) '~@style/variables.less';
-.page-view-article{
+@page-preview-selector: .page-preview;
+
+
+@{page-preview-selector}{
   padding: 0 50px 30px 50px;
-}
-.page-view-article h1{
-  text-align: center;
-}
-.page-view-article p{
-  line-height: 2;
-  font-size: 18px;
-}
-.page-view-article ol{
-  line-height: 2;
-  font-size: 18px;
+  h1{
+    text-align: center;
+  }
+  p{
+    line-height: 2;
+    font-size: 18px;
+  }
+  ol{
+    line-height: 2;
+    font-size: 18px;
+  }
+  &__reference-sup:hover{
+    color: @primary-color;
+    cursor: pointer;
+  }
+  &__reference-btn{
+    display: none;
+    color: @primary-color;
+    margin-left: @padding-md;
+    font-size: @font-size-sm;
+  }
+  &__reference-item:hover{
+    @{page-preview-selector}__reference-btn{
+      display: inline-block;
+    }
+  }
 }
