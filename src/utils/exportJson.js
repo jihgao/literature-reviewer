@@ -4,6 +4,6 @@ export function exportJson(fileName, json) {
   const blob = new Blob([jsonStr]);
   const saveLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
   saveLink.href = url.createObjectURL(blob);
-  saveLink.download = fileName;
+  saveLink.download = `${window.location.hostname.replace(/\./gm, '_')}--${fileName}`;
   saveLink.click();
 };
